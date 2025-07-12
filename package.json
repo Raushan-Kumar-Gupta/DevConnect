@@ -1,21 +1,21 @@
 {
-  "name": "devin2",
+  "name": "DevConnect",
   "version": "1.0.0",
-  "description": "devtinder is a web app",
+  "description": "DevConnect is a web app",
   "main": "index.js",
   "scripts": {
     "start": "nodemon ./src/app.js"
   },
   "keywords": [
-    "tinder",
-    "dev",
-    "devTinder"
+    "Dev",
+    "Connect",
+    "DevConnect"
   ],
   "author": "raushan",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.1",
-    "mongoose": "^8.7.1"
+    "express": "^4.21.2",
+    "mongoose": "^8.16.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
