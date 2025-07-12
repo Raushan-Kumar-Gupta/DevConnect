@@ -44,6 +44,43 @@ app.get("/feed", async(req, res)=>{
     } 
 })
 
+app.delete("/user", async (req, res)=>{
+    const userId = req.body.userId;
+    try{
+        const user = await User.findByIdAndDelete(userId);
+        if(!user){
+            res.status(404).send({message: "User not found"});
+        } else {
+            res.send({message: "User deleted successfully", user});
+        }
+    }
+    catch(err){
+        res.status(500).send({message: "Error deleting user", error: err.message});
+    }
+})
+
+app.patch("/user/:userId", async(req, res)=>{
+    const userId = req.params?.userId;
+    const data = req.body;
+    try{
+        const ALLOWED_UPDATES =["firstName", "lastName","about", "age","gender", "photoUrl"];
+        const isUpdateAllowed = Object.keys(data).every((k)=>ALLOWED_UPDATES.includes(k));
+        if(!isUpdateAllowed){
+            return res.status(400).send({message: "Invalid updates"});
+        }
+        if(data?.skills.length>10){
+            return res.status(400).send({message: "Skills cannot exceed 10 items"});
+        }
+        await User.findByIdAndUpdate({_id: userId}, data, {
+            runValidators: true
+        });
+        res.send({message: "User updated successfully"});
+    }
+    catch(err){
+        res.status(500).send({message: "Error updating user", error: err.message});
+    }
+});
+
 app.use("/", (req, res) => {
     res.send("Welcome to DevConnect API");  
 }); 
