@@ -38,7 +38,7 @@ authRouter.post("/login", async (req, res)=>{
             return res.status(401).send({message: "Invalid credentials"});
         }
         else{
-            const token = jwt.sign({_id:user._id}, "DevConnect@123", {expiresIn: '1h'});
+            const token = jwt.sign({_id:user._id}, "DevConnect@123", {expiresIn: '1d'});
             res.cookie("token", token);
             res.send({message: "Login successful", user});
         }
@@ -47,5 +47,15 @@ authRouter.post("/login", async (req, res)=>{
         res.status(400).send({message: "Error logging in", error: err.message});
     }
 })
+
+authRouter.post("/logout", (req, res)=>{
+    try{
+        res.clearCookie("token");
+        res.send({message: "Logged out successfully"});
+    }
+    catch(err){
+        res.status(400).send({message: "Error logging out", error: err.message});
+    }
+});
 
 module.exports = authRouter;
