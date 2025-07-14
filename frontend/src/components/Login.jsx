@@ -10,6 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const  navigate= useNavigate();
+  const [error, setError] = useState("");
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -24,6 +25,7 @@ const Login = () => {
       return navigate("/"); 
       // handle success (e.g., redirect or show message)
     } catch (err) {
+      setError(err.response?.data?.message|| "Invalid credentials");
       console.error("Login failed:", err);
     }
   };
@@ -55,6 +57,7 @@ const Login = () => {
               required
             />
           </div>
+          <p className="text-red-500 text-center">{error}</p>
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200"

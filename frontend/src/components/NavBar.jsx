@@ -1,10 +1,32 @@
 import { current } from "@reduxjs/toolkit";
-import { useSelector } from "react-redux";
-import { PROFILE_PIC_URL } from "../utils/constants";
+import { useDispatch, useSelector } from "react-redux";
+import { BASE_URL, PROFILE_PIC_URL } from "../utils/constants";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { removeUser } from "../utils/userSlice";
 
 const NavBar = () => {
   const user = useSelector((store) => store.user); // or store.user.user based on your store
   // console.log("navbar"+user.firstName);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogOut = () => {
+    try{
+      axios.post(
+      BASE_URL + "/logout",
+      {},
+      {
+        withCredentials: true,
+      }
+    );
+    dispatch(removeUser())
+    navigate("/login");
+    console.log("Logout successful");
+    }
+    catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
   return (
     <div className="navbar bg-accent px-4 flex flex-wrap justify-between">
       {/* Left: Logo & Brand */}
@@ -22,7 +44,8 @@ const NavBar = () => {
       {/* Center: Welcome Message (optional, can hide on small screens) */}
       {user?.firstName && (
         <div className="hidden sm:flex items-center font-semibold text-white text-lg px-4">
-          Welcome, {user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)}
+          Welcome,{" "}
+          {user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)}
         </div>
       )}
 
@@ -40,13 +63,7 @@ const NavBar = () => {
             className="btn btn-ghost btn-circle avatar"
           >
             <div className="w-10 rounded-full">
-              <img
-                alt="User Avatar"
-                src={
-                  user?.photoUrl ||
-                  PROFILE_PIC_URL
-                }
-              />
+              <img alt="User Avatar" src={user?.photoUrl || PROFILE_PIC_URL} />
             </div>
           </div>
           <ul
@@ -63,7 +80,7 @@ const NavBar = () => {
               <a>Settings</a>
             </li>
             <li>
-              <a>Logout</a>
+              <a onClick={handleLogOut}>Logout</a>
             </li>
           </ul>
         </div>
