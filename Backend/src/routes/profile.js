@@ -1,34 +1,38 @@
-const express = require('express');
-const { userAuth } = require('../middlewares/auth');
-const { validateEditProfileData } = require('../utils/validation');
+const express = require("express");
 const profileRouter = express.Router();
 
-profileRouter.get("/profile/view", userAuth, async(req, res)=>{
-    try{
-        const user = req.user;
-        if (!user) {
-            return res.status(404).send({message: "User not found"});
-        }
-        res.send(user);
-    }
-    catch(err){
-        res.status(400).send({message: "Error fetching profile", error: err.message});
-    }
-})
+const { userAuth } = require("../middlewares/auth");
+const { validateEditProfileData } = require("../utils/validation");
 
-profileRouter.patch("/profile/edit", userAuth, async(req, res)=>{
-    try{
-        if(!validateEditProfileData(req)){
-            throw new Error("Invalid profile data");
-        }
-        const loggedInUser = req.user;
-        Object.keys(req.body).forEach((key)=>(loggedInUser[key] = req.body[key]));
-        await loggedInUser.save();
-        res.json({message: `${loggedInUser.firstName}, Profile updated successfully`, user: loggedInUser});
+profileRouter.get("/profile/view", userAuth, async (req, res) => {
+  try {
+    const user = req.user;
+
+    res.send(user);
+  } catch (err) {
+    res.status(400).send("ERROR : " + err.message);
+  }
+});
+
+profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
+  try {
+    if (!validateEditProfileData(req)) {
+      throw new Error("Invalid Edit Request");
     }
-    catch(err){
-        res.status(400).send({message: "Error updating profile", error: err.message});
-    }
+
+    const loggedInUser = req.user;
+
+    Object.keys(req.body).forEach((key) => (loggedInUser[key] = req.body[key]));
+
+    await loggedInUser.save();
+
+    res.json({
+      message: `${loggedInUser.firstName}, your profile updated successfuly`,
+      data: loggedInUser,
+    });
+  } catch (err) {
+    res.status(400).send("ERROR : " + err.message);
+  }
 });
 
 module.exports = profileRouter;

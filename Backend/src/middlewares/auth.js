@@ -11,7 +11,7 @@ const userAuth = async (req, res, next) => {
         req.user = user;
         next();
     } catch (err) {
-        res.status(400).send({ message: "Invalid token", error: err.message });
+        res.status(401).send({ message: "Invalid token", error: err.message });
     }
 }
 
