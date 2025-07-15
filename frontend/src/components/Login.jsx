@@ -1,73 +1,129 @@
 import { useState } from "react";
 import axios from "axios";
-import { addUser } from "../utils/userSlice";
 import { useDispatch } from "react-redux";
-import { BASE_URL } from "../utils/constants";
+import { addUser } from "../utils/userSlice";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../utils/constants";
 
 const Login = () => {
   const [emailId, setEmailId] = useState("");
   const [password, setPassword] = useState("");
-  const dispatch = useDispatch();
-  const  navigate= useNavigate();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [isLoginForm, setIsLoginForm] = useState(true);
   const [error, setError] = useState("");
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogin = async () => {
     try {
-      const res = await axios.post(BASE_URL+"/login", {
-        emailId,
-        password,
-      }, {
-        withCredentials: true,
-      });
-      console.log("Login successful:", res.data);
-      dispatch(addUser(res.data.user));
-      return navigate("/"); 
-      // handle success (e.g., redirect or show message)
+      const res = await axios.post(
+        BASE_URL + "/login",
+        {
+          emailId,
+          password,
+        },
+        { withCredentials: true }
+      );
+      dispatch(addUser(res.data));
+      return navigate("/");
     } catch (err) {
-      setError(err.response?.data?.message|| "Invalid credentials");
-      console.error("Login failed:", err);
+      setError(err?.response?.data || "Something went wrong");
+    }
+  };
+
+  const handleSignUp = async () => {
+    try {
+      const res = await axios.post(
+        BASE_URL + "/signup",
+        { firstName, lastName, emailId, password },
+        { withCredentials: true }
+      );
+      dispatch(addUser(res.data.data));
+      return navigate("/profile");
+    } catch (err) {
+      setError(err?.response?.data || "Something went wrong");
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-        <form onSubmit={handleLogin}>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-            <input
-              type="email"
-              id="email"
-              value={emailId}
-              onChange={(e) => setEmailId(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
+    <div className="flex justify-center my-10">
+      <div className="card bg-base-300 w-96 shadow-xl">
+        <div className="card-body">
+          <h2 className="card-title justify-center">
+            {isLoginForm ? "Login" : "Sign Up"}
+          </h2>
+          <div>
+            {!isLoginForm && (
+              <>
+                <label className="form-control w-full max-w-xs my-2">
+                  <div className="label">
+                    <span className="label-text">First Name</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={firstName}
+                    className="input input-bordered w-full max-w-xs"
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                </label>
+                <label className="form-control w-full max-w-xs my-2">
+                  <div className="label">
+                    <span className="label-text">Last Name</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={lastName}
+                    className="input input-bordered w-full max-w-xs"
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </label>
+              </>
+            )}
+            <label className="form-control w-full max-w-xs my-2">
+              <div className="label">
+                <span className="label-text">Email ID:</span>
+              </div>
+              <input
+                type="text"
+                value={emailId}
+                className="input input-bordered w-full max-w-xs"
+                onChange={(e) => setEmailId(e.target.value)}
+              />
+            </label>
+            <label className="form-control w-full max-w-xs my-2">
+              <div className="label">
+                <span className="label-text">Password</span>
+              </div>
+              <input
+                type="password"
+                value={password}
+                className="input input-bordered w-full max-w-xs"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </label>
           </div>
-          <div className="mb-6">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
+          <p className="text-red-500">{error}</p>
+          <div className="card-actions justify-center m-2">
+            <button
+              className="btn btn-primary"
+              onClick={isLoginForm ? handleLogin : handleSignUp}
+            >
+              {isLoginForm ? "Login" : "Sign Up"}
+            </button>
           </div>
-          <p className="text-red-500 text-center">{error}</p>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200"
+
+          <p
+            className="m-auto cursor-pointer py-2"
+            onClick={() => setIsLoginForm((value) => !value)}
           >
-            Login
-          </button>
-        </form>
+            {isLoginForm
+              ? "New User? Signup Here"
+              : "Existing User? Login Here"}
+          </p>
+        </div>
       </div>
     </div>
   );
 };
-
 export default Login;

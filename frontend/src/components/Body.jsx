@@ -1,49 +1,42 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
-import { BASE_URL } from "../utils/constants";
-import { addUser } from "../utils/userSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
 import axios from "axios";
+import { BASE_URL } from "../utils/constants";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser } from "../utils/userSlice";
+import { useEffect } from "react";
 
 const Body = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((store)=>store.user);
+  const userData = useSelector((store) => store.user);
+
   const fetchUser = async () => {
+    if (userData) return;
     try {
-      const user = await axios.get(BASE_URL + "/profile/view", {
+      const res = await axios.get(BASE_URL + "/profile/view", {
         withCredentials: true,
       });
-      console.log("in body"+user.data.firstName);
-      dispatch(addUser(user.data));
-    } catch (error) {
-      if(err.status === 401) {
-        console.error("Unauthorized access, redirecting to login");
+      dispatch(addUser(res.data));
+    } catch (err) {
+      if (err.status === 401) {
         navigate("/login");
       }
+      console.error(err);
     }
   };
 
-  useEffect(()=>{
-    if(!user){
-      fetchUser();
-    }
-  },[]);
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div>
       <NavBar />
-
-      {/* This Outlet will grow and push the footer down */}
-      <div className="flex-1">
-        <Outlet />
-      </div>
-
+      <Outlet />
       <Footer />
     </div>
   );
 };
-
 export default Body;
