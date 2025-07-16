@@ -23,7 +23,7 @@ authRouter.post("/signup", async (req, res) => {
         res.json({message: "User created successfully", savedUser});
     }
     catch(err){
-        res.status(400).send({message: "Error creating user", error: err.message});
+        res.status(400).send(err.message || "Error creating user");
     }
 });
 
@@ -32,12 +32,12 @@ authRouter.post("/login", async (req, res)=>{
     try{
         const user = await User.findOne({emailId});
         if(!user || user.length === 0){
-            return res.status(404).send({message: "User not found"});
+            return res.status(404).send("User not found");
         }
         const isPasswordValid = await user.validatePassword(password);
         
         if(!isPasswordValid){
-            return res.status(401).send({message: "Invalid credentials"});
+            return res.status(401).send("Invalid credentials");
         }
         else{
             const token = await user.getJWT();
@@ -46,7 +46,7 @@ authRouter.post("/login", async (req, res)=>{
         }
     }
     catch(err){
-        res.status(400).send({message: "Error logging in", error: err.message});
+        res.status(400).send(err.message || "Error logging in");
     }
 })
 
@@ -56,7 +56,7 @@ authRouter.post("/logout", (req, res)=>{
         res.send({message: "Logged out successfully"});
     }
     catch(err){
-        res.status(400).send({message: "Error logging out", error: err.message});
+        res.status(400).send(err.message || "Error logging out");
     }
 });
 
