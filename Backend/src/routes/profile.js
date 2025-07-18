@@ -35,4 +35,19 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   }
 });
 
+
+profileRouter.delete("/profile/delete", async (req, res)=>{
+    const userId = req.body.userId;
+    try{
+        const user = await User.findByIdAndDelete(userId);
+        if(!user){
+            res.status(404).send({message: "User not found"});
+        } else {
+            res.send({message: "User deleted successfully", user});
+        }
+    }
+    catch(err){
+        res.status(500).send({message: "Error deleting user", error: err.message});
+    }
+})
 module.exports = profileRouter;
