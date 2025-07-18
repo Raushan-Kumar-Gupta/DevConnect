@@ -18,6 +18,7 @@ const Feed = () => {
       dispatch(addFeed(res?.data?.data));
     } catch (err) {
       //TODO: handle error
+      console.error("Error fetching feed:", err);
     }
   };
 
