@@ -1,45 +1,45 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema(
- {
+  {
     firstName: {
-        type: String,
-        required: true, 
-        minlength: 4,
-        maxlength: 20,
-        trim: true,
+      type: String,
+      required: true,
+      minlength: 4,
+      maxlength: 20,
+      trim: true,
     },
     lastName: {
-        type: String,
+      type: String,
     },
-    emailId:{
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true,
-        trim: true,
-        validate(value){
-            if(!validator.isEmail(value)){
-                throw new Error("Invalid email address");
-            }
+    emailId: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Invalid email address");
         }
+      },
     },
     password: {
-        type: String,
-        required: true,
-        validate(value){
-            if(!validator.isStrongPassword(value)){
-                throw new Error("Password must be strong");
-            }
+      type: String,
+      required: true,
+      validate(value) {
+        if (!validator.isStrongPassword(value)) {
+          throw new Error("Password must be strong");
         }
+      },
     },
-    age:{
-        type: Number,
-        min: 5,
-        max: 100,
+    age: {
+      type: Number,
+      min: 5,
+      max: 100,
     },
     gender: {
       type: String,
@@ -57,7 +57,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "https://geographyandyou.com/images/user-profile.png",
       validate(value) {
-        if (!validator.isURL(value)) {
+        // Accept HTTP/HTTPS URLs or data URLs (base64 images)
+        if (
+          !validator.isURL(value, {
+            protocols: ["http", "https"],
+            require_protocol: true,
+          }) &&
+          !/^data:image\/[a-zA-Z]+;base64,/.test(value)
+        ) {
           throw new Error("Invalid Photo URL: " + value);
         }
       },
@@ -75,19 +82,23 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.methods.getJWT =async function(){
-    const user = this;
-    const token =await jwt.sign({_id: user._id}, "DevConnect@123", {
-        expiresIn: '1d'})
-        return token;
-}
+userSchema.methods.getJWT = async function () {
+  const user = this;
+  const token = await jwt.sign({ _id: user._id }, "DevConnect@123", {
+    expiresIn: "1d",
+  });
+  return token;
+};
 
-userSchema.methods.validatePassword = async function(passwordInputByUser){
-    const user = this;
-    const isPasswordValid = await bcrypt.compare(passwordInputByUser, user.password);
-    if(!isPasswordValid){
-        throw new Error("Invalid credentials");
-    }
-    return isPasswordValid;
-}
-module.exports = mongoose.model('User', userSchema);
+userSchema.methods.validatePassword = async function (passwordInputByUser) {
+  const user = this;
+  const isPasswordValid = await bcrypt.compare(
+    passwordInputByUser,
+    user.password
+  );
+  if (!isPasswordValid) {
+    throw new Error("Invalid credentials");
+  }
+  return isPasswordValid;
+};
+module.exports = mongoose.model("User", userSchema);

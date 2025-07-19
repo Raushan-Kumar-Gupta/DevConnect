@@ -7,22 +7,36 @@ const jwt = require('jsonwebtoken');
 
 
 authRouter.post("/signup", async (req, res) => {
-    try{
+    try {
         validateSignUpData(req); // Validate signup data
-        const { firstName, lastName, emailId, password } = req.body;
+        const {
+            firstName,
+            lastName,
+            emailId,
+            password,
+            age,
+            gender,
+            photoUrl,
+            about,
+            skills
+        } = req.body;
         const passwordHash = await bcrypt.hash(password, 10);
         const user = new User({
-            firstName, 
+            firstName,
             lastName,
             emailId,
             password: passwordHash,
+            age,
+            gender,
+            photoUrl,
+            about,
+            skills
         });
         const savedUser = await user.save();
         const token = await savedUser.getJWT();
         res.cookie("token", token);
-        res.json({message: "User created successfully", savedUser});
-    }
-    catch(err){
+        res.json({ message: "User created successfully", savedUser });
+    } catch (err) {
         res.status(400).send(err.message || "Error creating user");
     }
 });
