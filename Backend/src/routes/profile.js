@@ -22,7 +22,19 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
 
     const loggedInUser = req.user;
 
-    Object.keys(req.body).forEach((key) => (loggedInUser[key] = req.body[key]));
+    Object.keys(req.body).forEach((key) => {
+      if (key === "skills") {
+        const val = req.body[key];
+        loggedInUser.skills =
+          typeof val === "string"
+            ? val.split(",").map((s) => s.trim())
+            : Array.isArray(val)
+            ? val
+            : [];
+      } else {
+        loggedInUser[key] = req.body[key];
+      }
+    });
 
     await loggedInUser.save();
 
@@ -35,19 +47,19 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   }
 });
 
-
-profileRouter.delete("/profile/delete", async (req, res)=>{
-    const userId = req.body.userId;
-    try{
-        const user = await User.findByIdAndDelete(userId);
-        if(!user){
-            res.status(404).send({message: "User not found"});
-        } else {
-            res.send({message: "User deleted successfully", user});
-        }
+profileRouter.delete("/profile/delete", async (req, res) => {
+  const userId = req.body.userId;
+  try {
+    const user = await User.findByIdAndDelete(userId);
+    if (!user) {
+      res.status(404).send({ message: "User not found" });
+    } else {
+      res.send({ message: "User deleted successfully", user });
     }
-    catch(err){
-        res.status(500).send({message: "Error deleting user", error: err.message});
-    }
-})
+  } catch (err) {
+    res
+      .status(500)
+      .send({ message: "Error deleting user", error: err.message });
+  }
+});
 module.exports = profileRouter;

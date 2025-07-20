@@ -11,9 +11,11 @@ const userSchema = new mongoose.Schema(
       minlength: 4,
       maxlength: 20,
       trim: true,
+      required: true,
     },
     lastName: {
       type: String,
+      required: true,
     },
     emailId: {
       type: String,
@@ -26,6 +28,7 @@ const userSchema = new mongoose.Schema(
           throw new Error("Invalid email address");
         }
       },
+      required: true,
     },
     password: {
       type: String,
@@ -35,11 +38,13 @@ const userSchema = new mongoose.Schema(
           throw new Error("Password must be strong");
         }
       },
+      required: true,
     },
     age: {
       type: Number,
       min: 5,
       max: 100,
+      required: true,
     },
     gender: {
       type: String,
@@ -52,6 +57,7 @@ const userSchema = new mongoose.Schema(
           throw new Error("Gender data is not valid");
         }
       },
+      required: true,
     },
     photoUrl: {
       type: String,
@@ -68,6 +74,7 @@ const userSchema = new mongoose.Schema(
           throw new Error("Invalid Photo URL: " + value);
         }
       },
+      required: true,
     },
     about: {
       type: String,
@@ -75,6 +82,7 @@ const userSchema = new mongoose.Schema(
     },
     skills: {
       type: [String],
+      required: true,
     },
   },
   {
