@@ -20,6 +20,12 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      isLoginForm ? handleLogin() : handleSignUp();
+    }
+  };
+
   const handleLogin = async () => {
     try {
       const res = await axios.post(
@@ -31,7 +37,7 @@ const Login = () => {
         { withCredentials: true }
       );
       dispatch(addUser(res.data.user)); // Only the user object!
-      navigate("/");
+      navigate("/feed");
     } catch (err) {
       setError(err?.response?.data || "Something went wrong");
     }
@@ -58,7 +64,7 @@ const Login = () => {
         { withCredentials: true }
       );
       dispatch(addUser(res.data.savedUser));
-      return navigate("/profile");
+      return navigate("/feed");
     } catch (err) {
       setError(err?.response?.data || "Something went wrong");
     }
@@ -157,6 +163,7 @@ const Login = () => {
             value={password}
             className="input input-bordered w-full"
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
         </div>
 

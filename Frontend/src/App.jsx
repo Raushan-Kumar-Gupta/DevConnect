@@ -20,7 +20,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Body />}>
               <Route index element={<FeedOrLanding />} />
-              {/* <Route path="/" element={<Feed />} /> */}
+              <Route path="/feed" element={<Feed />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Login />} />
               <Route path="/profile" element={<Profile />} />

@@ -5,10 +5,7 @@ import Marquees from "./Marquees";
 import Cards from "./Cards";
 
 const FeedOrLanding = () => {
-  const user = useSelector((store) => store.user);
-  return user && user._id ? (
-    <Feed />
-  ) : (
+ (
     <div>
       <LandingPage />
       <Marquees/>
