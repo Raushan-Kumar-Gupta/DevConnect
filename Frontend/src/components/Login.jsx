@@ -30,8 +30,8 @@ const Login = () => {
         },
         { withCredentials: true }
       );
-      dispatch(addUser(res.data));
-      return navigate("/");
+      dispatch(addUser(res.data.user)); // Only the user object!
+      navigate("/");
     } catch (err) {
       setError(err?.response?.data || "Something went wrong");
     }

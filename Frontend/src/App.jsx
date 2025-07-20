@@ -8,6 +8,9 @@ import Feed from "./components/Feed";
 import Connections from "./components/Connections";
 import Requests from "./components/Requests";
 import Chat from "./components/Chat";
+import FeedOrLanding from "./components/FeedOrLanding";
+import { useSelector } from "react-redux";
+
 
 function App() {
   return (
@@ -16,7 +19,8 @@ function App() {
         <BrowserRouter basename="/">
           <Routes>
             <Route path="/" element={<Body />}>
-              <Route path="/" element={<Feed />} />
+              <Route index element={<FeedOrLanding />} />
+              {/* <Route path="/" element={<Feed />} /> */}
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Login />} />
               <Route path="/profile" element={<Profile />} />

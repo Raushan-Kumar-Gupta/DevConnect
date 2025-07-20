@@ -20,7 +20,7 @@ const NavBar = () => {
   };
 
   return (
-    <div className="navbar bg-accent text-white px-4 py-3 shadow-md flex flex-wrap justify-between items-center">
+    <div className="navbar bg-[#3cd7ef] text-white px-4 py-3 shadow-md flex flex-wrap justify-between items-center">
       {/* Left: Logo & Brand */}
       <div className="flex items-center gap-3 flex-1">
         <img
