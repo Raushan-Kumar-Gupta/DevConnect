@@ -5,7 +5,7 @@ import Marquees from "./Marquees";
 import Cards from "./Cards";
 
 const FeedOrLanding = () => {
- (
+ return (
     <div>
       <LandingPage />
       <Marquees/>
